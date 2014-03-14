@@ -10,19 +10,13 @@ var server = http.createServer(function(request, response) {
     var parsedUrl = url.parse(request.url, true); // true to get query as object
     var queryAsObject = parsedUrl.query;
     var filePath = 'output.pdf';
+
+    //wkhtmltopdf('<h1>Test</h1><p>Hello world</p>')
+    //.pipe(response);
+
     wkhtmltopdf.command = './wkhtmltopdf/bin/wkhtmltopdf.exe';
-    wkhtmltopdf(queryAsObject["link"], {output: filePath}, function(){
-        var stat = fileSystem.statSync(filePath);
-
-        response.writeHead(200, {
-            'Content-Type': 'application/pdf',
-            'Content-Length': stat.size
-        });
-
-        var readStream = fileSystem.createReadStream(filePath);
-        readStream.pipe(response);
-    });
-
+    var fs = wkhtmltopdf(queryAsObject["link"]);
+    fs.pipe(response);
 });
 server.listen(8080);
 
